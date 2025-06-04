@@ -11,9 +11,13 @@ const cookieParser = require("cookie-parser");
 const userAuth = require("./middlewares/auth");
 const connectionRequestRouter = require("./routers/connectionRequest.js");
 const cors = require("cors");
+const http = require("http");
+const initializeServer = require("./utils/Socket.js");
+const paymentRouter = require("./routers/payment.js");
+
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true })); // This is used to read params and query params from the URL
 app.use(
   cors({
     origin: " http://localhost:5173",
@@ -25,6 +29,10 @@ app.use("/", profileRouter);
 app.use("/", userRequestsRouter);
 app.use("/", connectionRequestRouter);
 app.use("/", connectionRouter);
+app.use("/", paymentRouter);
+
+const server = http.createServer(app);
+initializeServer(server);
 
 // app.use("/", (req, res) => {
 //   res.send("Hello World!");
@@ -33,7 +41,7 @@ app.use("/", connectionRouter);
 connectDB()
   .then(() => {
     console.log("MongoDB connected successfully");
-    app.listen(process.env.PORT, async () => {
+    server.listen(process.env.PORT, async () => {
       console.log(`Server is running on porttt ${process.env.PORT}`);
     });
   })

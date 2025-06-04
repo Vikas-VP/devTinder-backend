@@ -4,7 +4,6 @@
   "description": "App",
   "main": "index.js",
   "scripts": {
-    "start": "node src/app.js",
     "dev": "nodemon src/app.js"
   },
   "repository": {
@@ -33,6 +32,8 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2",
+    "razorpay": "^2.9.6",
+    "socket.io": "^4.8.1",
     "validator": "^13.15.0"
   }
 }
