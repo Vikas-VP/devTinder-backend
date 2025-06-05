@@ -78,7 +78,7 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
       await user.save();
     }
 
-    console.log("✅ Payment processed:", paymentDetails);
+    console.log("✅ Payment processed:", paymentDetails, payment, user);
     res.status(200).json({ message: "Payment successful", data: user });
   } catch (error) {
     console.error("❌ Webhook error:", error);
