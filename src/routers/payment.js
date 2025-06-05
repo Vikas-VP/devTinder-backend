@@ -11,7 +11,7 @@ const User = require("../models/User");
 
 paymentRouter.post("/payment/create", userAuth, async (req, res) => {
   const currUser = req.user;
-  console.log(req, "bodyreq");
+
   const { membershipType } = req.body;
   try {
     const order = await razorpayInstance.orders.create({
@@ -45,29 +45,44 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 
 paymentRouter.post("/payment/webhook", async (req, res) => {
   try {
+    console.log("webhook called");
     const webhookSignature = req.get("X-Razorpay-Signature");
+    console.log(webhookSignature, "webhookSignature");
     const isWebhookValid = validateWebhookSignature(
       JSON.stringify(req.body),
       webhookSignature,
       process.env.RAZORPAY_WEBHOOK_SECRET
     );
+
     if (!isWebhookValid) {
-      res.status(400).send("Webhook is valid");
+      return res.status(400).send("Invalid webhook signature");
     }
+
     const paymentDetails = req.body.payload.payment.entity;
+
     const payment = await Payment.findOne({
-      orderId: paymentDetails?.order_Id,
+      orderId: paymentDetails?.order_id,
     });
+
+    if (!payment) {
+      return res.status(404).send("Payment record not found");
+    }
+
     payment.status = paymentDetails?.status;
     await payment.save();
+
     const user = await User.findOne({ _id: payment.userId });
-    user.isPremium = true;
-    user.membershipType = payment.notes.membershipType;
-    await user.save();
-    console.log(paymentDetails, user, payment);
-    res.status(200).json({ message: "payment successful", data: user });
+    if (user) {
+      user.isPremium = true;
+      user.membershipType = payment.notes.membershipType;
+      await user.save();
+    }
+
+    console.log("✅ Payment processed:", paymentDetails);
+    res.status(200).json({ message: "Payment successful", data: user });
   } catch (error) {
-    res.status(400).send("Error:" + error.message);
+    console.error("❌ Webhook error:", error);
+    res.status(500).send("Error: " + error.message);
   }
 });
 
