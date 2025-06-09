@@ -35,8 +35,8 @@ connectionRouter.get("/connections", userAuth, async (req, res) => {
         },
       ],
     })
-      .populate("fromUserId", ["firstName", "lastName"])
-      .populate("toUserId", ["firstName", "lastName"]);
+      .populate("fromUserId", ["firstName", "lastName", "status"])
+      .populate("toUserId", ["firstName", "lastName", "status"]);
 
     const userConnectionReqInfo = connectionReq?.map((request) => {
       if (request.fromUserId._id.equals(loggedInUser._id)) {

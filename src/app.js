@@ -14,6 +14,7 @@ const cors = require("cors");
 const http = require("http");
 const initializeServer = require("./utils/Socket.js");
 const paymentRouter = require("./routers/payment.js");
+const chatRouter = require("./routers/chat.js");
 
 app.use(cookieParser());
 app.use(express.json());
@@ -30,6 +31,7 @@ app.use("/", userRequestsRouter);
 app.use("/", connectionRequestRouter);
 app.use("/", connectionRouter);
 app.use("/", paymentRouter);
+app.use("/", chatRouter);
 
 const server = http.createServer(app);
 initializeServer(server);

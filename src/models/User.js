@@ -41,6 +41,10 @@ const userSchema = new Schema(
     membershipType: {
       type: String,
     },
+    status: {
+      type: String,
+      enum: ["offline", "online"],
+    },
   },
   {
     timestamps: true,
